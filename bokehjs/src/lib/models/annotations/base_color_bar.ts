@@ -496,7 +496,7 @@ export namespace BaseColorBar {
   export type Props = Annotation.Props & {
     location: p.Property<Anchor | [number, number]>
     orientation: p.Property<Orientation | "auto">
-    title: p.Property<string | null>
+    title: p.Property<string | BaseText | null>
     title_standoff: p.Property<number>
     width: p.Property<number | "auto">
     height: p.Property<number | "auto">
@@ -558,7 +558,7 @@ export class BaseColorBar extends Annotation {
     this.define<BaseColorBar.Props>(({Alpha, Number, String, Tuple, Map, Or, Ref, Auto, Nullable}) => ({
       location:              [ Or(Anchor, Tuple(Number, Number)), "top_right" ],
       orientation:           [ Or(Orientation, Auto), "auto" ],
-      title:                 [ Nullable(String), null ],
+      title:                 [ Nullable(Or(String, Ref(BaseText))), null ],
       title_standoff:        [ Number, 2 ],
       width:                 [ Or(Number, Auto), "auto" ],
       height:                [ Or(Number, Auto), "auto" ],
