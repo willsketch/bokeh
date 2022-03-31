@@ -249,12 +249,14 @@ export class HoverToolView extends InspectToolView {
     const tooltips: [number, number, HTMLElement | null][] = []
 
     if (glyph instanceof PatchView) {
+      const i = -1
       const [rx, ry] = [sx, sy]
       const vars = {
+        index: i,
         x, y, sx, sy, rx, ry,
         name: renderer.name,
       }
-      tooltips.push([rx, ry, this._render_tooltips(ds, -1, vars)])
+      tooltips.push([rx, ry, this._render_tooltips(ds, i, vars)])
     }
 
     if (glyph instanceof HAreaView) {
