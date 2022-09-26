@@ -3,6 +3,7 @@ import * as visuals from "core/visuals"
 import * as p from "core/properties"
 import {Signal0} from "core/signaling"
 import {Location, OutputBackend, Place, ResetPolicy} from "core/enums"
+import {RangesUpdate} from "core/bokeh_events"
 import {concat, remove_by} from "core/util/array"
 import {difference} from "core/util/set"
 import {isString} from "core/util/types"
@@ -249,5 +250,10 @@ export class Plot extends LayoutDOM {
   get side_panels(): (Annotation | Axis)[] {
     const {above, below, left, right} = this
     return concat([above, below, left, right])
+  }
+
+  trigger_ranges_update(): void {
+    const {x_range, y_range} = this
+    this.trigger_event(new RangesUpdate(x_range.start, x_range.end, y_range.start, y_range.end))
   }
 }

@@ -15,9 +15,9 @@ import {DataRange1d} from "../ranges/data_range1d"
 
 import {Reset} from "core/bokeh_events"
 import {build_view, build_views, remove_views} from "core/build_views"
+import {Signal0} from "core/signaling"
 import {Visuals, Renderable} from "core/visuals"
 import {logger} from "core/logging"
-import {RangesUpdate} from "core/bokeh_events"
 import {Side, RenderLevel} from "core/enums"
 import {SerializableState} from "core/view"
 import {throttle} from "core/util/throttle"
@@ -53,6 +53,8 @@ export class PlotView extends LayoutDOMView implements Renderable {
   get canvas(): CanvasView {
     return this.canvas_view
   }
+
+  readonly ranges_update = new Signal0(this, "ranges_update")
 
   protected _computed_style = new StyleSheet()
 
@@ -546,6 +548,7 @@ export class PlotView extends LayoutDOMView implements Renderable {
   update_range(range_info: RangeInfo | null, options?: RangeOptions): void {
     this.pause()
     this._range_manager.update(range_info, options)
+    this.ranges_update.emit()
     this.unpause()
   }
 
@@ -555,8 +558,7 @@ export class PlotView extends LayoutDOMView implements Renderable {
   }
 
   trigger_ranges_update_event(): void {
-    const {x_range, y_range} = this.model
-    this.model.trigger_event(new RangesUpdate(x_range.start, x_range.end, y_range.start, y_range.end))
+    this.model.trigger_ranges_update()
   }
 
   get_selection(): Map<DataRenderer, Selection> {
