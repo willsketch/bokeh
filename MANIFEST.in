@@ -5,7 +5,8 @@ graft src/bokeh/sphinxext/_templates
 graft src/bokeh/server/static
 exclude src/bokeh/server/static/js/*.json
 global-exclude *.js.map
-global-exclude *.ts.map
+global-exclude *.d.ts
+global-exclude *.d.ts.map
 include src/bokeh/server/static/js/bokeh.json
 include src/bokeh/server/views/*.html
 include src/bokeh/server/views/*.ico
