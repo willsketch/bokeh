@@ -311,8 +311,8 @@ class _BokehStructureGraph:
             Z = pd.DataFrame(self._obj_props_to_df2(M))
             Z["id"] = x[0]
             Z["model"] = str(M)
-            Z["values"] = Z["values"].map(lambda x: str(x))
-            Z["types"] = Z["types"].map(lambda x: str(x))
+            Z["values"] = Z["values"].map(str)
+            Z["types"] = Z["types"].map(str)
             df = pd.concat([df, Z])
         return df
 

@@ -198,7 +198,7 @@ class DataSpec(Either):
             help=help
         )
         self.value_type = self._validate_type_param(value_type)
-        self.accepts(Instance("bokeh.models.expressions.Expression"), lambda obj: Expr(obj))
+        self.accepts(Instance("bokeh.models.expressions.Expression"), Expr)
 
     def transform(self, value: Any):
         if isinstance(value, dict):

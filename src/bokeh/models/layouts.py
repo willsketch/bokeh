@@ -278,7 +278,7 @@ class LayoutDOM(UIElement):
 
     It is also permissible to assign from tuples, however these are adapted -- the
     property will always contain a list.
-    """).accepts(Seq(String), lambda x: list(x))
+    """).accepts(Seq(String), list)
 
     context_menu = Nullable(Instance(Menu), default=None, help="""
     A menu to display when user right clicks on the component.

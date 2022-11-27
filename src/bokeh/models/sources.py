@@ -125,6 +125,40 @@ class ColumnarDataSource(DataSource):
     An instance of a ``SelectionPolicy`` that determines how selections are set.
     """)
 
+def _data_from_df(df: pd.DataFrame) -> DataDict:
+    import pandas as pd
+
+    _df = df.copy()
+
+    # Flatten columns
+    if isinstance(df.columns, pd.MultiIndex):
+        try:
+            _df.columns = ['_'.join(col) for col in _df.columns.values]
+        except TypeError:
+            raise TypeError('Could not flatten MultiIndex columns. '
+                            'use string column names or flatten manually')
+    # Transform columns CategoricalIndex in list
+    if isinstance(df.columns, pd.CategoricalIndex):
+        _df.columns = df.columns.tolist()
+    # Flatten index
+    index_name = ColumnDataSource._df_index_name(df)
+    if index_name == 'index':
+        _df.index = pd.Index(_df.index.values)
+    else:
+        _df.index = pd.Index(_df.index.values, name=index_name)
+    _df.reset_index(inplace=True)
+
+    tmp_data = {c: v.values for c, v in _df.items()}
+
+    new_data: DataDict = {}
+    for k, v in tmp_data.items():
+        new_data[k] = v
+
+    return new_data
+
+def _data_from_groupby(group: pd.core.groupby.GroupBy) -> DataDict:
+    return _data_from_df(group.describe())
+
 class ColumnDataSource(ColumnarDataSource):
     ''' Maps names of columns to sequences or arrays.
 
@@ -204,9 +238,9 @@ class ColumnDataSource(ColumnarDataSource):
     objects. In these cases, the behaviour is identical to passing the objects
     to the ``ColumnDataSource`` initializer.
     """).accepts(
-        Object("pandas.DataFrame"), lambda x: ColumnDataSource._data_from_df(x)
+        Object("pandas.DataFrame"), _data_from_df
     ).accepts(
-        Object("pandas.core.groupby.GroupBy"), lambda x: ColumnDataSource._data_from_groupby(x)
+        Object("pandas.core.groupby.GroupBy"), _data_from_groupby
     ).asserts(lambda _, data: len({len(x) for x in data.values()}) <= 1,
                  lambda obj, name, data: warnings.warn(
                     "ColumnDataSource's columns must be of the same length. " +
@@ -231,9 +265,9 @@ class ColumnDataSource(ColumnarDataSource):
         import pandas as pd
         if not isinstance(raw_data, dict):
             if isinstance(raw_data, pd.DataFrame):
-                raw_data = self._data_from_df(raw_data)
+                raw_data = _data_from_df(raw_data)
             elif isinstance(raw_data, pd.core.groupby.GroupBy):
-                raw_data = self._data_from_groupby(raw_data)
+                raw_data = _data_from_groupby(raw_data)
             else:
                 raise ValueError(f"expected a dict or pandas.DataFrame, got {raw_data}")
         super().__init__(**kwargs)
@@ -245,65 +279,6 @@ class ColumnDataSource(ColumnarDataSource):
 
         '''
         return list(self.data)
-
-    @staticmethod
-    def _data_from_df(df: pd.DataFrame) -> DataDict:
-        ''' Create a ``dict`` of columns from a Pandas ``DataFrame``,
-        suitable for creating a ColumnDataSource.
-
-        Args:
-            df (DataFrame) : data to convert
-
-        Returns:
-            dict[str, np.array]
-
-        '''
-        import pandas as pd
-
-        _df = df.copy()
-
-        # Flatten columns
-        if isinstance(df.columns, pd.MultiIndex):
-            try:
-                _df.columns = ['_'.join(col) for col in _df.columns.values]
-            except TypeError:
-                raise TypeError('Could not flatten MultiIndex columns. '
-                                'use string column names or flatten manually')
-        # Transform columns CategoricalIndex in list
-        if isinstance(df.columns, pd.CategoricalIndex):
-            _df.columns = df.columns.tolist()
-        # Flatten index
-        index_name = ColumnDataSource._df_index_name(df)
-        if index_name == 'index':
-            _df.index = pd.Index(_df.index.values)
-        else:
-            _df.index = pd.Index(_df.index.values, name=index_name)
-        _df.reset_index(inplace=True)
-
-        tmp_data = {c: v.values for c, v in _df.items()}
-
-        new_data: DataDict = {}
-        for k, v in tmp_data.items():
-            new_data[k] = v
-
-        return new_data
-
-    @staticmethod
-    def _data_from_groupby(group: pd.core.groupby.GroupBy) -> DataDict:
-        ''' Create a ``dict`` of columns from a Pandas ``GroupBy``,
-        suitable for creating a ``ColumnDataSource``.
-
-        The data generated is the result of running ``describe``
-        on the group.
-
-        Args:
-            group (GroupBy) : data to convert
-
-        Returns:
-            dict[str, np.array]
-
-        '''
-        return ColumnDataSource._data_from_df(group.describe())
 
     @staticmethod
     def _df_index_name(df: pd.DataFrame) -> str:
@@ -348,7 +323,7 @@ class ColumnDataSource(ColumnarDataSource):
             dict[str, np.array]
 
         '''
-        return cls._data_from_df(data)
+        return _data_from_df(data)
 
     @classmethod
     def from_groupby(cls, data: pd.core.groupby.GroupBy) -> DataDict:
@@ -365,7 +340,7 @@ class ColumnDataSource(ColumnarDataSource):
             dict[str, np.array]
 
         '''
-        return cls._data_from_df(data.describe())
+        return _data_from_groupby(data)
 
     def to_df(self) -> pd.DataFrame:
         ''' Convert this data source to pandas ``DataFrame``.
