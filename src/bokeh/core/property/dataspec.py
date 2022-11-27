@@ -27,7 +27,6 @@ from typing import TYPE_CHECKING, Any
 from ...util.dataclasses import Unspecified
 from ...util.serialization import convert_datetime_type, convert_timedelta_type
 from ...util.strings import nice_join
-from .. import enums
 from .color import Color
 from .datetime import Datetime, TimeDelta
 from .descriptors import DataSpecPropertyDescriptor, UnitsSpecPropertyDescriptor
@@ -341,22 +340,27 @@ class FontSizeSpec(DataSpec):
 
 class FontStyleSpec(DataSpec):
     def __init__(self, default, *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(Enum(enums.FontStyle), default=default, help=help)
 
 class TextAlignSpec(DataSpec):
     def __init__(self, default, *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(Enum(enums.TextAlign), default=default, help=help)
 
 class TextBaselineSpec(DataSpec):
     def __init__(self, default, *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(Enum(enums.TextBaseline), default=default, help=help)
 
 class LineJoinSpec(DataSpec):
     def __init__(self, default, *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(Enum(enums.LineJoin), default=default, help=help)
 
 class LineCapSpec(DataSpec):
     def __init__(self, default, *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(Enum(enums.LineCap), default=default, help=help)
 
 class DashPatternSpec(DataSpec):
@@ -479,6 +483,7 @@ class AngleSpec(UnitsSpec):
 
     """
     def __init__(self, default=Undefined, units_default="rad", *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(default=default, units_enum=enums.AngleUnits, units_default=units_default, help=help)
 
 class DistanceSpec(UnitsSpec):
@@ -489,6 +494,7 @@ class DistanceSpec(UnitsSpec):
 
     """
     def __init__(self, default=Undefined, units_default="data", *, help: str | None = None) -> None:
+        from .. import enums
         super().__init__(default=default, units_enum=enums.SpatialUnits, units_default=units_default, help=help)
 
     def prepare_value(self, cls, name, value):
@@ -583,8 +589,8 @@ class ColorSpec(DataSpec):
             True, if the value is a string color literal
 
         """
-        return isinstance(val, str) and \
-               ((len(val) == 7 and val[0] == "#") or val in enums.NamedColor)
+        from .. import enums
+        return isinstance(val, str) and ((len(val) == 7 and val[0] == "#") or val in enums.NamedColor)
 
     @classmethod
     def is_color_tuple_shape(cls, val):

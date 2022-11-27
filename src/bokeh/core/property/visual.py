@@ -34,7 +34,6 @@ import PIL.Image
 # Bokeh imports
 from ...util.deprecation import deprecated
 from ...util.serialization import convert_datetime_type
-from .. import enums
 from .auto import Auto
 from .bases import Property
 from .container import Seq, Tuple
@@ -90,6 +89,7 @@ class DashPattern(Either):
     }
 
     def __init__(self, default=[], *, help: str | None = None) -> None:
+        from .. import enums
         types = Enum(enums.DashPattern), Regex(r"^(\d+(\s+\d+)*)?$"), Seq(Int)
         super().__init__(*types, default=default, help=help)
 
@@ -131,6 +131,7 @@ class HatchPatternType(Either):
     """
 
     def __init__(self, default=[], *, help: str | None = None) -> None:
+        from .. import enums
         types = Enum(enums.HatchPattern), Enum(enums.HatchPatternAbbreviation), String
         super().__init__(*types, default=default, help=help)
 
@@ -246,6 +247,7 @@ class MarkerType(Enum):
 
     """
     def __init__(self, **kw) -> None:
+        from .. import enums
         super().__init__(enums.MarkerType, **kw)
 
 #-----------------------------------------------------------------------------

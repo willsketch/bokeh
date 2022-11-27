@@ -21,15 +21,17 @@ log = logging.getLogger(__name__)
 #-----------------------------------------------------------------------------
 
 # Standard library imports
-from typing import Any, overload
+from typing import TYPE_CHECKING, Any, overload
 
 # Bokeh imports
 from ...util.strings import nice_join
-from .. import enums
 from ._sphinx import model_link, property_link, register_type_link
 from .bases import Init
 from .primitive import String
 from .singletons import Intrinsic
+
+if TYPE_CHECKING:
+   from .. import enums
 
 #-----------------------------------------------------------------------------
 # Globals and constants
@@ -59,6 +61,7 @@ class Enum(String):
     def __init__(self, enum: str, *values: str, default: Init[str] = ..., help: str | None = ...) -> None: ...
 
     def __init__(self, enum: str | enums.Enumeration, *values: str, default: Init[str] = Intrinsic, help: str | None = None) -> None:
+        from .. import enums
         if not (not values and isinstance(enum, enums.Enumeration)):
             enum = enums.enumeration(enum, *values)
         self._enum = enum
@@ -98,6 +101,8 @@ class Enum(String):
 
 @register_type_link(Enum)
 def _sphinx_type(obj: Enum) -> str:
+    from .. import enums
+
     # try to return a link to a proper enum in bokeh.core.enums if possible
     if obj._enum in enums.__dict__.values():
         for name, value in enums.__dict__.items():

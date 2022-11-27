@@ -22,12 +22,14 @@ log = logging.getLogger(__name__)
 
 # Standard library imports
 from copy import copy
-from typing import Type, TypeVar
+from typing import TYPE_CHECKING, Type, TypeVar
 
 # Bokeh imports
-from ..has_props import HasProps
 from .descriptor_factory import PropertyDescriptorFactory
 from .descriptors import PropertyDescriptor
+
+if TYPE_CHECKING:
+    from ..has_props import HasProps
 
 #-----------------------------------------------------------------------------
 # Globals and constants
@@ -51,6 +53,7 @@ class Include(PropertyDescriptorFactory[T]):
     """
 
     def __init__(self, delegate: Type[HasProps], *, help: str = "", prefix: str | None = None) -> None:
+        from ..has_props import HasProps
         if not (isinstance(delegate, type) and issubclass(delegate, HasProps)):
             raise ValueError(f"expected a subclass of HasProps, got {delegate!r}")
 

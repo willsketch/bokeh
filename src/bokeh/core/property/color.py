@@ -26,7 +26,6 @@ from typing import Any
 
 # Bokeh imports
 from ... import colors
-from .. import enums
 from .bases import Init, Property
 from .container import Tuple
 from .either import Either
@@ -118,6 +117,7 @@ class Color(Either):
     """
 
     def __init__(self, default: Init[str | tuple[int, int, int] | tuple[int, int, int, float]] = Undefined, *, help: str | None = None) -> None:
+        from .. import enums
         types = (Enum(enums.NamedColor),
                  Regex(r"^#[0-9a-fA-F]{3}$"),
                  Regex(r"^#[0-9a-fA-F]{4}$"),
@@ -152,6 +152,7 @@ class ColorHex(Color):
     """
 
     def transform(self, value: Any) -> Any:
+        from .. import enums
         if isinstance(value, str):
             value = value.lower()
             if value.startswith('rgb'):
