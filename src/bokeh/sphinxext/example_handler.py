@@ -113,7 +113,7 @@ class ExampleHandler(Handler):
         import bokeh.document as d
 
         old_doc = d.Document
-        d.Document = _curdoc
+        setattr(d, "Document", _curdoc)
 
         return old_io, old_doc
 
@@ -129,7 +129,7 @@ class ExampleHandler(Handler):
 
         import bokeh.document as d
 
-        d.Document = old_doc
+        setattr(d, "Document", old_doc)
 
     @property
     def failed(self) -> bool:
