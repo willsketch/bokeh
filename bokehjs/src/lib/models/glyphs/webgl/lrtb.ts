@@ -7,8 +7,10 @@ import type {BlockView} from "../block"
 import type {HBarView} from "../hbar"
 import type {QuadView} from "../quad"
 import type {VBarView} from "../vbar"
+import type {HBandView} from "../hband"
+import type {VBandView} from "../vband"
 
-type AnyLRTBView = BlockView | HBarView | QuadView | VBarView
+type AnyLRTBView = BlockView | HBarView | QuadView | VBarView | HBandView | VBandView
 
 export class LRTBGL extends SingleMarkerGL {
   constructor(regl_wrapper: ReglWrapper, override readonly glyph: AnyLRTBView) {
@@ -61,7 +63,11 @@ export class LRTBGL extends SingleMarkerGL {
     this._heights!.update()
     this._widths!.update()
 
-    const {top_left, top_right, bottom_right, bottom_left} = this.glyph.border_radius
-    this._border_radius = [top_left, top_right, bottom_right, bottom_left]
+    if ("border_radius" in this.glyph) {
+      const {top_left, top_right, bottom_right, bottom_left} = this.glyph.border_radius
+      this._border_radius = [top_left, top_right, bottom_right, bottom_left]
+    } else {
+      this._border_radius = [0, 0, 0, 0]
+    }
   }
 }
