@@ -1629,6 +1629,7 @@ class Wedge(XYGlyph, LineGlyph, FillGlyph, HatchGlyph):
     """)
 
 class HSpan(LineGlyph):
+    """ Horizontal lines of infinite width. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
@@ -1645,6 +1646,7 @@ class HSpan(LineGlyph):
     """)
 
 class VSpan(LineGlyph):
+    """ Vertical lines of infinite height. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
@@ -1661,19 +1663,20 @@ class VSpan(LineGlyph):
     """)
 
 class HBand(LineGlyph, FillGlyph, HatchGlyph):
+    """ Horizontal bands of infinite width. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    _args = ("top", "bottom")
+    _args = ("y0", "y1")
 
-    top = NumberSpec(default=field("top"), help="""
-    The y-coordinates of the top edges of the bands.
+    y0 = NumberSpec(default=field("y0"), help="""
+    The y-coordinates of the coordinates of one side of the bands.
     """)
 
-    bottom = NumberSpec(default=field("bottom"), help="""
-    The y-coordinates of the bottom edges of the bands.
+    y1 = NumberSpec(default=field("y1"), help="""
+    The y-coordinates of the coordinates of the other side of the bands.
     """)
 
     line_props = Include(LineProps, help="""
@@ -1689,19 +1692,20 @@ class HBand(LineGlyph, FillGlyph, HatchGlyph):
     """)
 
 class VBand(LineGlyph, FillGlyph, HatchGlyph):
+    """ Vertical bands of infinite height. """
 
     # explicit __init__ to support Init signatures
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    _args = ("left", "right")
+    _args = ("x0", "x1")
 
-    left = NumberSpec(default=field("left"), help="""
-    The x-coordinates of the left edges of the bands.
+    x0 = NumberSpec(default=field("x0"), help="""
+    The x-coordinates of the coordinates of one side of the bands.
     """)
 
-    right = NumberSpec(default=field("right"), help="""
-    The x-coordinates of the right edges of the bands.
+    x1 = NumberSpec(default=field("x1"), help="""
+    The x-coordinates of the coordinates of the other side of the bands.
     """)
 
     line_props = Include(LineProps, help="""
