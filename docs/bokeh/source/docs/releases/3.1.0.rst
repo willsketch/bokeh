@@ -8,4 +8,4 @@ Bokeh Version ``3.1.0`` () is a minor milestone of Bokeh project.
 Changes
 -------
 
-* Official support for Python 3.11 was added
+* Official support for Python 3.11 was added and support for 3.8 removed
