@@ -12,6 +12,7 @@ export type BokehEventType =
 export type ModelEventType =
   "button_click" |
   "menu_item_click" |
+  "submit_value" |
   UIEventType
 
 export type UIEventType =
@@ -45,6 +46,7 @@ export type BokehEventMap = {
   document_ready: DocumentReady
   button_click: ButtonClick
   menu_item_click: MenuItemClick
+  submit_value: SubmitValue
   lodstart: LODStart
   lodend: LODEnd
   rangesupdate: RangesUpdate
@@ -125,6 +127,19 @@ export class MenuItemClick extends ModelEvent {
   protected override get event_values(): Attrs {
     const {item} = this
     return {...super.event_values, item}
+  }
+}
+
+@event("submit_value")
+export class SubmitValue extends ModelEvent {
+
+  constructor(readonly value: string) {
+    super()
+  }
+
+  protected override get event_values(): Attrs {
+    const {value} = this
+    return {...super.event_values, value}
   }
 }
 
