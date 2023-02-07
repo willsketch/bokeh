@@ -66,6 +66,7 @@ log = logging.getLogger(__name__)
 #-----------------------------------------------------------------------------
 
 # Standard library imports
+from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -88,15 +89,14 @@ if TYPE_CHECKING:
 #-----------------------------------------------------------------------------
 
 __all__ = (
-    'Reconnected',
-    'Disconnected',
     'ButtonClick',
+    'ConnectionLost',
     'DocumentEvent',
     'DocumentReady',
     'DoubleTap',
     'Event',
-    'LODStart',
     'LODEnd',
+    'LODStart',
     'MenuItemClick',
     'ModelEvent',
     'MouseEnter',
@@ -109,15 +109,15 @@ __all__ = (
     'Pinch',
     'PinchEnd',
     'PinchStart',
-    'RangesUpdate',
-    'Rotate',
-    'RotateEnd',
-    'RotateStart',
     'PlotEvent',
     'PointEvent',
     'Press',
     'PressUp',
+    'RangesUpdate',
     'Reset',
+    'Rotate',
+    'RotateEnd',
+    'RotateStart',
     'SelectionGeometry',
     'Tap',
 )
@@ -193,17 +193,16 @@ class ConnectionEvent(DocumentEvent):
 
     '''
 
-class Reconnected(ConnectionEvent):
-    ''' Announce when a connection to the server/client was regained.
-
-    '''
-    event_name = 'reconnected'
-
-class Disconnected(ConnectionEvent):
+class ConnectionLost(ConnectionEvent):
     ''' Announce when a connection to the server/client was lost.
 
     '''
-    event_name = 'disconnected'
+    event_name = 'connection_lost'
+    timestamp: datetime
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.timestamp = datetime.now()
 
 class ModelEvent(Event):
     ''' Base class for all Bokeh Model events.
